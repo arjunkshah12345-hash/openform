@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://arjunkshah12345-hash.github.io/openform/sitemap.xml

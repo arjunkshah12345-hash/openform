@@ -1,0 +1,33 @@
+{
+  "targets": [
+    {
+      "account": {
+        "kind": "connected-account",
+        "version": 1,
+        "backend": "default",
+        "platform": "x",
+        "accountId": "draft-only-unselected-account"
+      }
+    }
+  ],
+  "content": {
+    "text": "Your questions. Your data. Your code.\n\nOpenform is an MIT-licensed form builder with SQLite storage, seven question types, and a one-question-at-a-time experience.\n\nThe source is yours to run and change:\nhttps://github.com/arjunkshah12345-hash/openform",
+    "media": [
+      {
+        "kind": "video",
+        "source": {
+          "kind": "https-url",
+          "url": "https://arjunkshah12345-hash.github.io/openform/media/openform-launch.mp4"
+        },
+        "filename": "openform-launch.mp4",
+        "mimeType": "video/mp4",
+        "byteSize": 1841700,
+        "width": 1920,
+        "height": 1080,
+        "durationSeconds": 30,
+        "altText": "Openform launch film. Animated demonstrations of the editor, one-question-at-a-time forms, responses, CSV export, and MIT-licensed source."
+      }
+    ]
+  },
+  "idempotencyKey": "openform-launch-draft-3"
+}

@@ -1,0 +1,13 @@
+# Openform
+
+MIT-licensed conversational form builder. Independent of Typeform.
+
+## Product
+- [Website](https://arjunkshah12345-hash.github.io/openform/)
+- [Source and self-hosting guide](https://github.com/arjunkshah12345-hash/openform)
+- [An open-source Typeform alternative you can self-host](https://arjunkshah12345-hash.github.io/openform/guides/open-source-typeform-alternative.html)
+- [How to self-host a conversational form builder](https://arjunkshah12345-hash.github.io/openform/guides/self-host-conversational-forms.html)
+- [Build a conversational customer feedback form](https://arjunkshah12345-hash.github.io/openform/guides/customer-feedback-form.html)
+
+## Important limits
+GitHub Pages is a browser-local interactive demo. Self-host the Node.js/SQLite app to collect responses centrally. The app is single-owner and has no built-in login; protect administrative routes before public deployment. No conditional logic, file uploads, managed hosting, or automatic Typeform import.

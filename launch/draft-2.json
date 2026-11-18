@@ -1,0 +1,33 @@
+{
+  "targets": [
+    {
+      "account": {
+        "kind": "connected-account",
+        "version": 1,
+        "backend": "default",
+        "platform": "x",
+        "accountId": "draft-only-unselected-account"
+      }
+    }
+  ],
+  "content": {
+    "text": "A form should feel like a conversation.\n\nOne question at a time. Space to think. A little personality.\n\nThat’s Openform—an open-source form builder you can self-host.\n\nWatch the demo, then build your own:\nhttps://arjunkshah12345-hash.github.io/openform/?utm_source=x&utm_medium=social&utm_campaign=openform_launch&utm_content=draft_2",
+    "media": [
+      {
+        "kind": "video",
+        "source": {
+          "kind": "https-url",
+          "url": "https://arjunkshah12345-hash.github.io/openform/media/openform-launch.mp4"
+        },
+        "filename": "openform-launch.mp4",
+        "mimeType": "video/mp4",
+        "byteSize": 1841700,
+        "width": 1920,
+        "height": 1080,
+        "durationSeconds": 30,
+        "altText": "Openform launch film. Animated demonstrations of the editor, one-question-at-a-time forms, responses, CSV export, and MIT-licensed source."
+      }
+    ]
+  },
+  "idempotencyKey": "openform-launch-draft-2"
+}

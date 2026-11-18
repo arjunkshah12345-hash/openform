@@ -1,0 +1,10 @@
+services:
+  openform:
+    build: .
+    ports:
+      - "127.0.0.1:3001:3001"
+    volumes:
+      - openform-data:/app/data
+    restart: unless-stopped
+volumes:
+  openform-data:
