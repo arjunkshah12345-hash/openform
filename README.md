@@ -1,10 +1,10 @@
 # Openform
 
-**Good questions. Great connections.**
+**Forms worth answering.**
 
 [Try the interactive demo](https://arjunkshah12345-hash.github.io/openform/) · [Watch the launch film](https://arjunkshah12345-hash.github.io/openform/media/openform-launch.mp4) · [Self-hosting guide](https://arjunkshah12345-hash.github.io/openform/guides/self-host-conversational-forms.html)
 
-![Openform — Good questions deserve great forms](public/social-card.png)
+![Openform — Forms worth answering](public/social-card.png)
 
 A friendly, open-source alternative to Typeform. Build forms, share a conversational one-question-at-a-time experience, and keep your responses in your own SQLite database.
 

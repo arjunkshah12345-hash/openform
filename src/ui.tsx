@@ -2,7 +2,6 @@ import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import {
   X,
-  ArrowUpRight,
   Sparkles,
   MessageCircle,
   Waves,
@@ -17,11 +16,9 @@ export function Logo({ compact = false }: { compact?: boolean }) {
       <span className="logo-mark">
         <svg viewBox="0 0 32 32" fill="none">
           <path
-            d="M9 9h9a7 7 0 0 1 0 14H9V9Z"
-            stroke="currentColor"
-            strokeWidth="3.8"
+            fill="currentColor"
+            d="M7 7h16v4H11v11h12v4H7zM14 14h11v4H14zM23 11h3v3h-3zM23 18h3v4h-3z"
           />
-          <path d="M10 16h9" stroke="currentColor" strokeWidth="3.8" />
         </svg>
       </span>
       {!compact && <>openform</>}
@@ -121,100 +118,21 @@ export function Cover({
       className={`form-cover theme-${theme} ${small ? "cover-small" : ""}`}
       aria-hidden="true"
     >
-      {theme === "sage" ? (
-        <>
-          <span className="cover-copy">
-            A little feedback.
-            <br />A big difference.
-          </span>
-          <svg className="cover-star" viewBox="0 0 120 120">
-            <path
-              d="m60 0 9 35L96 8 85 44l35-1-30 20 28 22-35-4 8 35-26-27-12 31-5-36-32 19 18-32L0 63l35-12L9 26l35 10z"
-              fill="currentColor"
-            />
-          </svg>
-          <span className="cover-orbit" />
-        </>
-      ) : theme === "peach" ? (
-        <>
-          <span className="cover-hello">
-            hello<span>✳</span>
-          </span>
-          <span className="cover-tag">NICE TO MEET YOU</span>
-          <span className="cover-squiggle">〰</span>
-        </>
-      ) : theme === "lilac" ? (
-        <>
-          <div className="mini-browser">
-            <div>
-              <i />
-              <i />
-              <i />
-            </div>
-            <span>
-              your opinion
-              <br />
-              <em>looks good here.</em>
-            </span>
-            <div className="mini-browser-button">Let's talk ↗</div>
-          </div>
-          <span className="cover-daisy">✳</span>
-        </>
-      ) : theme === "blue" ? (
-        <>
-          <div className="cover-ticket">
-            <span>YOU’RE INVITED</span>
-            <strong>
-              Good people.
-              <br />
-              Great times.
-            </strong>
-            <div>
-              ADMIT ONE <ArrowUpRight size={18} />
-            </div>
-          </div>
-          <span className="cover-circle" />
-        </>
-      ) : theme === "sand" ? (
-        <>
-          <span className="cover-work">
-            Great work.
-            <br />
-            <em>Better together.</em>
-          </span>
-          <div className="cover-arches">
-            <i />
-            <i />
-            <i />
-          </div>
-        </>
-      ) : (
-        <>
-          <span className="cover-check">
-            How’s it
-            <br />
-            <em>going?</em>
-          </span>
-          <div className="cover-smile">
-            <i />
-            <i />
-            <span />
-          </div>
-        </>
-      )}
-      <span className="cover-corner">
-        <Icon size={15} />
+      <span className="cover-grid" />
+      <span className="cover-shape" />
+      <span className="cover-center">
+        <Icon size={28} strokeWidth={1.6} />
       </span>
     </div>
   );
 }
 export const themes = [
-  { id: "sage", name: "Sage", color: "#dce9d7" },
-  { id: "peach", name: "Peach", color: "#f8d8c4" },
-  { id: "lilac", name: "Lilac", color: "#dedcf5" },
-  { id: "blue", name: "Sky", color: "#d6e6f2" },
-  { id: "sand", name: "Sand", color: "#ece1cd" },
-  { id: "rose", name: "Rose", color: "#f0d9df" },
+  { id: "sage", name: "Sage", color: "#e9f0c7" },
+  { id: "peach", name: "Peach", color: "#f6ddd0" },
+  { id: "lilac", name: "Lilac", color: "#e8defa" },
+  { id: "blue", name: "Sky", color: "#dce8fb" },
+  { id: "sand", name: "Sand", color: "#f0e5cc" },
+  { id: "rose", name: "Rose", color: "#f6dce6" },
 ];
 export function Empty({
   icon,

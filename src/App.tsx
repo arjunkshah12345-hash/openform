@@ -21,7 +21,6 @@ import {
   Plus,
   Search,
   Settings2,
-  Sprout,
   Trash2,
   X,
   Code2,
@@ -44,7 +43,7 @@ import {
 } from "./routing";
 
 type Page = "workspace" | "templates" | "responses" | "trash";
-function AppContent() {
+export default function App() {
   const [path, setPath] = useState(currentRoute);
   const [forms, setForms] = useState<Form[]>([]);
   const [loading, setLoading] = useState(true);
@@ -269,8 +268,7 @@ function AppContent() {
             className={page === "templates" ? "active" : ""}
             onClick={() => changePage("templates")}
           >
-            <LayoutTemplate size={18} /> Templates{" "}
-            <span className="nav-new">NEW</span>
+            <LayoutTemplate size={18} /> Templates
           </button>
           <button
             className={page === "responses" ? "active" : ""}
@@ -287,21 +285,9 @@ function AppContent() {
           </button>
         </nav>
         <div className="sidebar-bottom">
-          <div className="opensource-card">
-            <span className="opensource-icon">
-              <Code2 size={18} />
-              <span>OPEN BY NATURE</span>
-            </span>
-            <strong>Your forms. Your rules.</strong>
-            <p>
-              Open source. No limits.
-              <br />
-              Just better conversations.
-            </p>
-            <button onClick={() => setDialog("opensource")}>
-              Meet Openform <ArrowUpRight size={14} />
-            </button>
-          </div>
+          <a className="sidebar-help" href={REPO_URL}>
+            <Code2 size={18} /> Source code <ArrowUpRight size={14} />
+          </a>
           <button className="sidebar-help" onClick={() => setDialog("help")}>
             <CircleHelp size={18} /> Help & getting started{" "}
             <ArrowUpRight size={14} />
@@ -316,7 +302,7 @@ function AppContent() {
             <span className="user-avatar">Y</span>
             <span>
               <strong>Your workspace</strong>
-              <small>Make yourself at home</small>
+              <small>Workspace settings</small>
             </span>
             <Settings2 size={17} />
           </button>
@@ -347,12 +333,21 @@ function AppContent() {
             </span>
           </div>
           <div>
-            <span className="local-label">
-              <span /> All yours. Always.
-            </span>
-            <button className="whats-new" onClick={() => setDialog("whatsnew")}>
-              <span /> What’s new <ArrowUpRight size={13} />
-            </button>
+            {STATIC_DEMO && (
+              <a
+                className="workspace-demo-label"
+                href={
+                  import.meta.env.BASE_URL +
+                  "guides/self-host-conversational-forms.html"
+                }
+                title="Demo forms and answers are stored in this browser"
+              >
+                Browser demo <ArrowUpRight size={12} />
+              </a>
+            )}
+            <a className="whats-new" href={routeUrl("/")}>
+              Openform home <ArrowUpRight size={13} />
+            </a>
             <button
               className="user-avatar top-avatar"
               onClick={() => {
@@ -368,127 +363,39 @@ function AppContent() {
         <main className="workspace-main">
           <div className="page-intro">
             <div>
-              <div className="eyebrow">
-                <span className="tiny-spark">✳</span>{" "}
-                {page === "workspace"
-                  ? "A SPACE FOR YOUR IDEAS"
-                  : page === "templates"
-                    ? "SKIP THE BLANK PAGE"
-                    : page === "responses"
-                      ? "LISTEN A LITTLE CLOSER"
-                      : "ROOM FOR A FRESH START"}
-              </div>
               <h1>
-                {page === "workspace" ? (
-                  <>
-                    Good things start
-                    <br className="intro-break" /> with a question
-                    <span className="heading-period">.</span>
-                  </>
-                ) : page === "templates" ? (
-                  <>
-                    A little inspiration.
-                    <br />A running start.
-                  </>
-                ) : page === "responses" ? (
-                  "Every answer matters."
-                ) : (
-                  "Gone, for now."
-                )}
+                {page === "workspace"
+                  ? "Workspace"
+                  : page === "templates"
+                    ? "Templates"
+                    : page === "responses"
+                      ? "Responses"
+                      : "Trash"}
               </h1>
               <p>
                 {page === "workspace"
-                  ? "A little curiosity can go a long way. What will you ask today?"
+                  ? "Create, organize, and share your forms."
                   : page === "templates"
-                    ? "Thoughtfully made templates. Ready for your own spin."
+                    ? "Pick a starting point and make it your own."
                     : page === "responses"
-                      ? "The people, ideas, and insights behind your forms."
-                      : "Restore a form whenever you need it, or let it go for good."}
+                      ? "Browse submissions and export your answers."
+                      : "Restore forms or delete them permanently."}
               </p>
             </div>
             {page === "workspace" && (
-              <div className="intro-note">
-                <svg viewBox="0 0 90 40">
-                  <path
-                    d="M3 31C31 38 63 25 70 5m-14 5 15-7 4 15"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                  />
-                </svg>
-                <span>
-                  Less friction.
-                  <br />
-                  More connection.
-                </span>
+              <div className="workspace-actions">
+                <button
+                  className="secondary"
+                  onClick={() => changePage("templates")}
+                >
+                  <LayoutTemplate size={16} /> Templates
+                </button>
+                <button className="primary" onClick={() => setDialog("create")}>
+                  <Plus size={17} /> Create form
+                </button>
               </div>
             )}
           </div>
-          {page === "workspace" && (
-            <div className="start-row">
-              <section className="create-banner">
-                <div>
-                  <span className="banner-eyebrow">
-                    FROM A QUESTION TO A CONNECTION
-                  </span>
-                  <h2>
-                    Make room for
-                    <br />
-                    your next great idea.
-                  </h2>
-                  <button
-                    className="banner-button"
-                    onClick={() => setDialog("create")}
-                  >
-                    <Plus size={17} /> Create a form <ArrowUpRight size={16} />
-                  </button>
-                </div>
-                <div className="banner-art" aria-hidden="true">
-                  <div className="art-dots" />
-                  <div className="art-paper art-paper-back" />
-                  <div className="art-paper">
-                    <span className="art-paper-logo">✳</span>
-                    <span className="art-question">
-                      What’s on
-                      <br />
-                      your mind?
-                    </span>
-                    <span className="art-input">Your next big thing...</span>
-                    <span className="art-ok">
-                      OK <Check size={11} />
-                    </span>
-                    <span className="art-progress">
-                      <i />
-                    </span>
-                  </div>
-                  <span className="art-spark">✳</span>
-                  <span className="art-loop">↗</span>
-                </div>
-              </section>
-              <section className="template-banner">
-                <span className="template-badge">
-                  <LayoutTemplate size={17} />
-                </span>
-                <span className="banner-eyebrow">A LITTLE HEAD START</span>
-                <h2>
-                  No blank-page
-                  <br /> energy required.
-                </h2>
-                <p>
-                  Pick a template.
-                  <br />
-                  Make it your own.
-                </p>
-                <button onClick={() => changePage("templates")}>
-                  Explore templates <ArrowRight size={16} />
-                </button>
-                <span className="template-swirl" aria-hidden="true">
-                  ✴
-                </span>
-              </section>
-            </div>
-          )}
           {page === "templates" ? (
             <div className="template-section">
               <div className="section-title">
@@ -893,12 +800,6 @@ function AppContent() {
               )}
             </section>
           )}
-          <footer className="workspace-footer">
-            <span>
-              <Sprout size={14} /> Made for meaningful connections.
-            </span>
-            <span>Beautiful forms. Open to everyone.</span>
-          </footer>
         </main>
       </div>
       {dialog === "create" && (
@@ -1143,44 +1044,4 @@ function formatEdited(date: string) {
     : days === 1
       ? "Edited yesterday"
       : `Edited ${days} days ago`;
-}
-
-export default function App() {
-  return (
-    <>
-      <AppContent />
-      {STATIC_DEMO && (
-        <aside
-          aria-label="Demo information"
-          style={{
-            position: "fixed",
-            bottom: 12,
-            left: 12,
-            zIndex: 90,
-            display: "flex",
-            alignItems: "center",
-            gap: 9,
-            maxWidth: "calc(100vw - 24px)",
-            padding: "9px 12px",
-            border: "1px solid #d5dfcb",
-            borderRadius: 7,
-            background: "#fffef7f5",
-            boxShadow: "0 3px 14px #233b2420",
-            fontSize: 10,
-            color: "#627454",
-          }}
-        >
-          <span>Interactive demo · stored in this browser</span>
-          <a
-            href={REPO_URL}
-            target="_blank"
-            rel="noreferrer"
-            style={{ textDecoration: "underline", whiteSpace: "nowrap" }}
-          >
-            Self-host ↗
-          </a>
-        </aside>
-      )}
-    </>
-  );
 }

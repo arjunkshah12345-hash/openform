@@ -1,19 +1,24 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ArrowDown,
+  ArrowLeft,
   ArrowRight,
   ArrowUpRight,
   Check,
-  ChevronLeft,
   Code2,
   Copy,
+  Download,
   Github,
-  Heart,
+  Layers3,
   Play,
+  Plus,
   RotateCcw,
   Star,
+  Terminal,
 } from "lucide-react";
 import { Logo, Modal } from "./ui";
+import { SignalArt, PixelField } from "./visuals";
+import { Kbd } from "./vendor/vibeui/kbd";
 import "./landing.css";
 
 type LandingProps = {
@@ -21,816 +26,551 @@ type LandingProps = {
   repoUrl: string;
   demoUrl?: string;
 };
-const scrollToSection = (id: string) =>
-  document
-    .getElementById(id)
-    ?.scrollIntoView({
-      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
-        ? "auto"
-        : "smooth",
-      block: "start",
-    });
 
-export default function Landing({ onOpenWorkspace, repoUrl }: LandingProps) {
-  const [copied, setCopied] = useState(false);
-  const [showFilm, setShowFilm] = useState(false);
-  const assetBase = import.meta.env.BASE_URL;
-  const [showPrivacy, setShowPrivacy] = useState(false);
-  const repoPath = repoUrl.replace("https://github.com/", "");
-  const copy = () =>
-    navigator.clipboard
-      .writeText(
-        `git clone https://github.com/${repoPath}.git\ncd ${repoPath.split("/").pop()}\nnpm install\nnpm run dev`,
-      )
-      .then(() => {
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2500);
-      })
-      .catch(() => setCopied(false));
+const useCases = [
+  {
+    label: "Feedback",
+    question: "How was your experience?",
+    type: "Rating",
+    theme: "sage",
+    icon: Star,
+  },
+  {
+    label: "Research",
+    question: "What slows you down at work?",
+    type: "Long text",
+    theme: "lilac",
+    icon: Layers3,
+  },
+  {
+    label: "Registration",
+    question: "Which session will you attend?",
+    type: "Multiple choice",
+    theme: "peach",
+    icon: ArrowRight,
+  },
+];
+
+export default function Landing({
+  onOpenWorkspace,
+  repoUrl,
+  demoUrl,
+}: LandingProps) {
+  const [film, setFilm] = useState(false);
+  const [active, setActive] = useState(0);
+  const base = import.meta.env.BASE_URL;
+  const example = useCases[active];
+  const start = (
+    className: string,
+    text: string,
+    icon = <ArrowUpRight size={17} />,
+  ) => (
+    <a
+      href={demoUrl || "/workspace"}
+      className={className}
+      onClick={(event) => {
+        if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+          return;
+        event.preventDefault();
+        onOpenWorkspace();
+      }}
+    >
+      {text}
+      {icon}
+    </a>
+  );
+
   return (
-    <div className="of-landing">
+    <div className="launch-site">
       <a
-        href="#of-main"
-        className="of-skip"
-        onClick={(e) => {
-          e.preventDefault();
-          document.getElementById("of-main")?.focus();
+        className="launch-skip"
+        href="#launch-main"
+        onClick={(event) => {
+          event.preventDefault();
+          document.getElementById("launch-main")?.focus();
         }}
       >
         Skip to content
       </a>
-      <header className="of-nav">
-        <button
-          className="of-brand"
-          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-          aria-label="Openform home"
-        >
-          <Logo />
-        </button>
-        <nav aria-label="Site navigation">
-          <button onClick={() => scrollToSection("of-features")}>
-            Why Openform
-          </button>
-          <button onClick={() => scrollToSection("of-use-cases")}>
-            Made for you
-          </button>
-          <a href={repoUrl} target="_blank" rel="noreferrer">
-            GitHub <ArrowUpRight size={13} />
+      <div className="launch-dark">
+        <header className="launch-nav launch-width">
+          <a className="launch-brand" href={base} aria-label="Openform home">
+            <Logo />
           </a>
-        </nav>
-        <button className="of-nav-cta" onClick={onOpenWorkspace}>
-          Try the builder <ArrowRight size={15} />
-        </button>
-      </header>
-      <main id="of-main" tabIndex={-1}>
-        <section className="of-hero">
-          <div className="of-hero-copy">
-            <a
-              className="of-open-source"
-              href={repoUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <span /> OPEN SOURCE. OPEN POSSIBILITIES.{" "}
-              <ArrowUpRight size={12} />
+          <nav aria-label="Site navigation">
+            <SectionLink id="launch-product">Product</SectionLink>
+            <SectionLink id="launch-host">Self-host</SectionLink>
+            <a href={repoUrl}>
+              <Github size={17} /> GitHub
             </a>
-            <h1>
-              Good questions.
-              <br />
-              Great <em>connections.</em>
-            </h1>
-            <p>
-              Forms that feel like a conversation.
-              <br />
-              Beautiful to fill out. Simple to make. Yours to own.
-            </p>
-            <div className="of-hero-actions">
-              <button
-                className="of-button of-button-dark"
-                onClick={onOpenWorkspace}
-              >
-                Make your first form <ArrowUpRight size={18} />
-              </button>
-              <a
-                className="of-github-link"
-                href={repoUrl}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <Github size={17} /> View the source
+          </nav>
+          {start("launch-button launch-nav-action", "Open builder")}
+        </header>
+        <div id="launch-main" role="main" tabIndex={-1}>
+          <section
+            className="launch-hero launch-width"
+            aria-labelledby="launch-title"
+          >
+            <div className="launch-hero-copy">
+              <a className="launch-release" href={repoUrl}>
+                <span /> Open source · MIT license <ArrowUpRight size={13} />
               </a>
+              <h1 id="launch-title">
+                Forms worth
+                <br /> <span>answering.</span>
+              </h1>
+              <p>
+                Build beautiful forms that ask one question at a time. Share a
+                link, see the answers, and host it on your own terms.
+              </p>
+              <div className="launch-actions">
+                {start("launch-button launch-accent", "Create a form")}
+                <button
+                  className="launch-button launch-quiet"
+                  onClick={() => setFilm(true)}
+                >
+                  <Play size={15} /> Watch the film
+                </button>
+              </div>
+              <p className="launch-fine">
+                Try it in your browser. No account needed.
+              </p>
             </div>
-            <div className="of-hero-footnote">
-              <Check size={13} /> No account. No credit card. Just curiosity.
+            <div className="launch-stage">
+              <SignalArt />
+              <QuickForm />
+              <div className="launch-stage-note">
+                <span>↖</span> Try the form
+              </div>
             </div>
-            <button className="of-film-link" onClick={() => setShowFilm(true)}>
-              <Play size={13} fill="currentColor" /> Watch the 30-second film{" "}
-              <ArrowUpRight size={13} />
-            </button>
-            <div className="of-handwritten" aria-hidden="true">
-              <svg viewBox="0 0 105 55">
-                <path
-                  d="M3 7c23 9 15 41 62 35 16-2 24-11 34-23m-18 3 20-7-1 20"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.5"
-                  strokeLinecap="round"
-                />
-              </svg>
-              <span>
-                Less form.
-                <br />
-                More human.
-              </span>
-            </div>
-          </div>
-          <div className="of-hero-demo">
-            <div className="of-demo-caption">
-              <span>
-                <span /> A LITTLE PREVIEW OF WHAT’S POSSIBLE
-              </span>
-              <span>
-                Go on, try it <ArrowDown size={13} />
-              </span>
-            </div>
-            <ConversationDemo />
-            <div className="of-demo-under">
-              <span>
-                <Heart size={12} /> A small interaction. A better first
-                impression.
-              </span>
-              <span>100% yours.</span>
-            </div>
-            <span className="of-hero-asterisk" aria-hidden="true">
-              ✳
+          </section>
+          <div className="launch-modes launch-width">
+            <span>
+              <Layers3 size={17} /> Visual form builder
+            </span>
+            <span>
+              <ArrowRight size={17} /> One question at a time
+            </span>
+            <span>
+              <Download size={17} /> CSV export
+            </span>
+            <span>
+              <Code2 size={17} /> Self-hostable
             </span>
           </div>
-        </section>
-        <div className="of-belief">
-          <span>For the good questions in life.</span>
-          <div>
-            <span>Feedback worth hearing.</span>
-            <i>✳</i>
-            <span>People worth knowing.</span>
-            <i>✳</i>
-            <span>Ideas worth exploring.</span>
-          </div>
         </div>
-        <section id="of-features" className="of-feature-section">
-          <div className="of-section-heading">
-            <span className="of-eyebrow">THOUGHTFULLY SIMPLE</span>
-            <h2>
-              Less friction.
-              <br />
-              <em>More conversation.</em>
-            </h2>
-            <p>
-              Getting an answer shouldn’t feel like paperwork.
-              <br />
-              Give every question a little breathing room.
-            </p>
-          </div>
-          <div className="of-feature-layout">
-            <div className="of-editor-scene">
-              <div className="of-editor-chrome">
-                <span>
-                  <i />
-                  <i />
-                  <i />
-                </span>
-                <span>Customer feedback</span>
-                <span>
-                  <Check size={11} /> Saved
-                </span>
-              </div>
-              <MiniEditor />
-              <div className="of-editor-caption">
-                <Code2 size={13} /> An actual form builder. No coding required.
-              </div>
-            </div>
-            <div className="of-feature-copy">
-              <span className="of-feature-number">01 / MAKE IT YOURS</span>
-              <h3>
-                A blank page.
-                <br />A world of possibilities.
-              </h3>
-              <p>
-                Start with an idea or a ready-to-go template. Add your
-                questions, find your colors, and make something that feels like
-                you.
-              </p>
-              <ul>
-                <li>
-                  <Check /> Seven useful question types
-                </li>
-                <li>
-                  <Check /> Six thoughtful color themes
-                </li>
-                <li>
-                  <Check /> A preview that feels like the real thing
-                </li>
-              </ul>
-              <button className="of-text-link" onClick={onOpenWorkspace}>
-                Find your starting point <ArrowRight size={16} />
-              </button>
-            </div>
-          </div>
-          <div className="of-two-principles">
-            <article>
-              <span className="of-feature-number">02 / KEEP IT HUMAN</span>
-              <h3>
-                One question.
-                <br />
-                All their attention.
-              </h3>
-              <p>
-                A familiar conversation, not a wall of fields. A thoughtful
-                experience on every screen, with keyboard controls and room to
-                share.
-              </p>
-              <span className="of-principle-flower" aria-hidden="true">
-                ✳
-              </span>
-            </article>
-            <article>
-              <span className="of-feature-number">03 / REALLY LISTEN</span>
-              <h3>
-                Every response.
-                <br />A new perspective.
-              </h3>
-              <p>
-                Keep the answers together. Read the whole story, look a little
-                closer, or take your responses with you in a clean CSV export.
-              </p>
-              <div className="of-principle-answers" aria-hidden="true">
-                <span>
-                  <Check /> “That felt easy.”
-                </span>
-                <span>
-                  <Heart size={13} /> “Thanks for asking.”
-                </span>
-              </div>
-            </article>
-          </div>
-        </section>
-        <UseCases onOpenWorkspace={onOpenWorkspace} />
-        <section id="of-open-source" className="of-ownership">
-          <div>
-            <span className="of-eyebrow">OPEN BY NATURE. YOURS BY DESIGN.</span>
-            <h2>
-              Beautiful forms.
-              <br />
-              <em>Without the strings.</em>
-            </h2>
-            <p>
-              Good software should give you more freedom.
-              <br />
-              Openform is MIT licensed. Read it, change it, host it.
-              <br />
-              Your forms and your data deserve a home of their own.
-            </p>
-            <a
-              className="of-button of-button-dark"
-              href={repoUrl}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <Github size={17} /> Make it your own <ArrowUpRight size={16} />
-            </a>
-            <div className="of-ownership-note">
-              <span>MIT LICENSED</span>
-              <span>SELF-HOSTABLE</span>
-              <span>NO TRACKERS</span>
-            </div>
-          </div>
-          <div className="of-code-wrap">
-            <div className="of-code-heading">
-              <span>YOUR NEXT CONVERSATION STARTS HERE</span>
-              <button onClick={copy} aria-label="Copy setup commands">
-                {copied ? <Check size={15} /> : <Copy size={15} />}{" "}
-                {copied ? "Copied" : "Copy"}
-              </button>
-            </div>
-            <pre>
-              <code>
-                <span className="of-code-comment">
-                  # A little space of your own
-                </span>
-                {"\n"}
-                <span className="of-code-prompt">$</span> git clone {repoUrl}
-                .git{"\n"}
-                <span className="of-code-prompt">$</span> cd{" "}
-                {repoPath.split("/").pop()}
-                {"\n"}
-                <span className="of-code-prompt">$</span> npm install{"\n"}
-                <span className="of-code-prompt">$</span> npm run dev{"\n\n"}
-                <span className="of-code-ready">
-                  → Your workspace is ready.
-                </span>
-              </code>
-            </pre>
-            <div className="of-code-footer">
-              <span>React + TypeScript + SQLite</span>
-              <a href={`${repoUrl}#readme`} target="_blank" rel="noreferrer">
-                Self-hosting guide <ArrowUpRight size={13} />
-              </a>
-            </div>
-            <p className="of-demo-disclaimer">
-              The online demo saves forms and responses in your browser.
-              Self-host Openform to collect responses from everyone, in your own
-              database.
-            </p>
-          </div>
-        </section>
-        <section className="of-faq">
-          <div>
-            <span className="of-eyebrow">A FEW GOOD QUESTIONS</span>
-            <h2>
-              Curious?
-              <br />
-              <em>Good.</em>
-            </h2>
-          </div>
-          <div>
-            {[
-              [
-                "Is Openform really free?",
-                "Yes. The source code is MIT licensed. Use it, change it, and host it yourself. There are no paid plans built into Openform. You cover your own hosting costs.",
-              ],
-              [
-                "Can I try it without setting anything up?",
-                "Absolutely. The browser demo lets you build, style, publish, and fill out forms. Demo forms and responses stay in that browser. For shared response collection, run your own instance.",
-              ],
-              [
-                "What can I build with it?",
-                "Feedback forms, event sign-ups, research surveys, contact forms, applications, and anything else a good question can start. Choose short text, long text, email, multiple choice, number, rating, or yes/no questions.",
-              ],
-              [
-                "Where does my data live?",
-                "In the demo, it lives in your browser’s local storage. In a self-hosted instance, forms and responses live in your SQLite database. There are no analytics trackers or third-party data collection built into the app.",
-              ],
-              [
-                "Can I contribute?",
-                "Please do. Openform is built to be read, improved, and made your own. Visit the GitHub repository for the code, setup instructions, and contribution guide.",
-              ],
-            ].map(([q, a]) => (
-              <details key={q}>
-                <summary>
-                  {q}
-                  <PlusSymbol />
-                </summary>
-                <p>{a}</p>
-              </details>
-            ))}
-          </div>
-        </section>
-        <section className="of-final-cta">
-          <span className="of-final-flower" aria-hidden="true">
-            ✳
-          </span>
-          <span className="of-eyebrow">A LITTLE CURIOSITY GOES A LONG WAY</span>
+      </div>
+      <section className="launch-product launch-width" id="launch-product">
+        <div className="launch-section-intro">
           <h2>
-            What will you
+            One builder.
             <br />
-            <em>ask today?</em>
+            Any good question.
           </h2>
-          <button
-            className="of-button of-button-dark"
-            onClick={onOpenWorkspace}
+          <p>
+            Start with a template or a blank form. Mix seven question types,
+            choose a theme, and preview what respondents will see.
+          </p>
+        </div>
+        <div className="launch-product-grid">
+          <div
+            className="product-use-cases"
+            role="group"
+            aria-label="Example questions"
           >
-            Start a conversation <ArrowUpRight size={18} />
-          </button>
-          <p>Beautiful forms. Open to everyone.</p>
-        </section>
-      </main>
-      <section className="of-guides" aria-label="Openform guides">
-        <span className="of-eyebrow">A FEW USEFUL STARTING POINTS</span>
-        <div>
-          <a href={`${assetBase}guides/open-source-typeform-alternative.html`}>
-            An open-source Typeform alternative <ArrowUpRight size={14} />
-          </a>
-          <a href={`${assetBase}guides/self-host-conversational-forms.html`}>
-            Self-hosting guide <ArrowUpRight size={14} />
-          </a>
-          <a href={`${assetBase}guides/customer-feedback-form.html`}>
-            Build a customer feedback form <ArrowUpRight size={14} />
-          </a>
+            {useCases.map((item, index) => (
+              <button
+                key={item.label}
+                aria-pressed={active === index}
+                onClick={() => setActive(index)}
+              >
+                <span className="product-use-icon">
+                  <item.icon size={18} />
+                </span>
+                <span>
+                  {item.label}
+                  <small>{item.type}</small>
+                </span>
+                <ArrowUpRight size={17} />
+              </button>
+            ))}
+            {start("launch-button launch-outline", "Try the editor")}
+          </div>
+          <div className="product-editor">
+            <div className="product-chrome">
+              <i />
+              <i />
+              <i />
+              <span>Form preview</span>
+              <Check size={15} />
+            </div>
+            <div className={"product-preview theme-" + example.theme}>
+              <div className="product-question" key={example.label}>
+                <div className="launch-mono">
+                  01 <ArrowRight size={13} />
+                </div>
+                <h3>{example.question}</h3>
+                {example.type === "Rating" ? (
+                  <div className="product-stars" aria-hidden="true">
+                    {Array.from({ length: 5 }, (_, i) => (
+                      <Star key={i} size={24} />
+                    ))}
+                  </div>
+                ) : example.type === "Long text" ? (
+                  <div className="product-placeholder">
+                    Type your answer here…
+                  </div>
+                ) : (
+                  <div className="product-options">
+                    <span>A&nbsp; Morning</span>
+                    <span>B&nbsp; Afternoon</span>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
-      <footer className="of-footer">
-        <div>
-          <Logo />
-          <span>A little more human.</span>
+      <section className="launch-host" id="launch-host">
+        <div className="launch-width launch-host-grid">
+          <div>
+            <span className="launch-mono">
+              <Terminal size={15} /> SELF-HOST OPENFORM
+            </span>
+            <h2>
+              Your forms.
+              <br />
+              Your database.
+            </h2>
+            <p>
+              Run Openform with Docker and collect responses in your own SQLite
+              database. Export answers as CSV whenever you need them.
+            </p>
+            <a
+              className="launch-button launch-outline"
+              href={base + "guides/self-host-conversational-forms.html"}
+            >
+              Self-hosting guide <ArrowUpRight size={17} />
+            </a>
+          </div>
+          <InstallBox repoUrl={repoUrl} />
         </div>
+      </section>
+      <section className="launch-faq launch-width">
+        <h2>Good to know.</h2>
         <div>
-          <a href={repoUrl} target="_blank" rel="noreferrer">
-            GitHub <ArrowUpRight size={13} />
-          </a>
-          <a
-            href={`${repoUrl}/blob/main/LICENSE`}
-            target="_blank"
-            rel="noreferrer"
-          >
-            MIT license
-          </a>
-          <button
-            onClick={() => setShowPrivacy(!showPrivacy)}
-            aria-expanded={showPrivacy}
-          >
-            Your privacy
-          </button>
-          <span>Made for meaningful connections.</span>
+          {[
+            [
+              "Where do responses go?",
+              "The online demo saves forms and answers in your browser. Run your own Openform instance to collect responses centrally.",
+            ],
+            [
+              "What can I build?",
+              "Use seven question types to build feedback forms, surveys, applications, and sign-ups. Preview, publish, and share a link when it’s ready.",
+            ],
+            [
+              "Can I change the code?",
+              "Yes. Openform is MIT licensed. You can run, modify, and redistribute it.",
+            ],
+          ].map(([question, answer]) => (
+            <details key={question}>
+              <summary>
+                {question}
+                <Plus size={17} />
+              </summary>
+              <p>{answer}</p>
+            </details>
+          ))}
         </div>
-        {showPrivacy && (
-          <p className="of-privacy-copy">
-            Openform includes no analytics or advertising trackers. The demo
-            uses your browser’s local storage for forms and responses; your
-            preview answers above are held only in memory. Your hosting provider
-            may keep normal server access logs. Self-hosted owners control their
-            own database and privacy practices.
-          </p>
-        )}
+      </section>
+      <footer className="launch-footer">
+        <div className="launch-width">
+          <a className="launch-brand" href={base}>
+            <Logo />
+          </a>
+          <div className="launch-footer-links">
+            <a href={base + "guides/open-source-typeform-alternative.html"}>
+              Typeform alternative
+            </a>
+            <a href={base + "guides/customer-feedback-form.html"}>
+              Feedback forms
+            </a>
+            <a href={repoUrl}>
+              GitHub <ArrowUpRight size={13} />
+            </a>
+            <a href={repoUrl + "/blob/main/LICENSE"}>MIT license</a>
+          </div>
+        </div>
       </footer>
-      {showFilm && (
-        <Modal title="Meet Openform" onClose={() => setShowFilm(false)} wide>
+      {film && (
+        <Modal title="Meet Openform" onClose={() => setFilm(false)} wide>
           <video
-            className="of-launch-video"
+            className="launch-video"
             controls
             playsInline
             autoPlay
             preload="metadata"
-            poster={`${assetBase}social-card.png`}
-            aria-label="Openform 30-second launch film"
+            poster={base + "social-card.png"}
+            aria-label="Openform launch film"
           >
-            <source
-              src={`${assetBase}media/openform-launch.mp4`}
-              type="video/mp4"
-            />
+            <source src={base + "media/openform-launch.mp4"} type="video/mp4" />
             <track
               kind="captions"
-              src={`${assetBase}media/openform-launch.vtt`}
+              src={base + "media/openform-launch.vtt"}
               srcLang="en"
               label="English"
             />
-            Your browser does not support video playback.
           </video>
-          <p className="of-video-caption">
-            Build. Ask. Listen. An original Remotion film with original music.
-          </p>
         </Modal>
       )}
     </div>
   );
 }
-function PlusSymbol() {
+
+function SectionLink({ id, children }: { id: string; children: string }) {
   return (
-    <span className="of-plus" aria-hidden="true">
-      +
-    </span>
+    <a
+      href={"#" + id}
+      onClick={(event) => {
+        event.preventDefault();
+        const reduce = window.matchMedia(
+          "(prefers-reduced-motion: reduce)",
+        ).matches;
+        document
+          .getElementById(id)
+          ?.scrollIntoView({ behavior: reduce ? "auto" : "smooth" });
+      }}
+    >
+      {children}
+    </a>
   );
 }
 
-function ConversationDemo() {
+function InstallBox({ repoUrl }: { repoUrl: string }) {
+  const [status, setStatus] = useState<"idle" | "copied" | "error">("idle");
+  useEffect(() => {
+    if (status === "idle") return;
+    const timer = window.setTimeout(() => setStatus("idle"), 2400);
+    return () => window.clearTimeout(timer);
+  }, [status]);
+  const commands = [
+    "git clone " + repoUrl + ".git",
+    "cd " + repoUrl.split("/").at(-1),
+    "docker compose up --build -d",
+  ];
+  return (
+    <div className="launch-terminal">
+      <div className="launch-terminal-top">
+        <span>
+          <Terminal size={16} /> Terminal
+        </span>
+        <button
+          onClick={() => {
+            navigator.clipboard.writeText(commands.join("\n")).then(
+              () => setStatus("copied"),
+              () => setStatus("error"),
+            );
+          }}
+        >
+          {status === "copied" ? <Check size={15} /> : <Copy size={15} />}{" "}
+          <span aria-live="polite">
+            {status === "copied"
+              ? "Copied"
+              : status === "error"
+                ? "Copy unavailable"
+                : "Copy"}
+          </span>
+        </button>
+      </div>
+      <pre tabIndex={0}>
+        <code>
+          {commands.map((line) => (
+            <span key={line}>
+              <b>$ </b>
+              {line}
+            </span>
+          ))}
+        </code>
+      </pre>
+      <div className="launch-terminal-foot">
+        Local instance <span>→</span> <code>127.0.0.1:3001</code>
+      </div>
+    </div>
+  );
+}
+
+function QuickForm() {
   const [step, setStep] = useState(0);
   const [name, setName] = useState("");
   const [choice, setChoice] = useState("");
   const [rating, setRating] = useState(0);
   const [error, setError] = useState("");
-  const [complete, setComplete] = useState(false);
-  const themes = ["sage", "peach", "lilac"];
-  const next = () => {
-    if (
-      (step === 0 && !name.trim()) ||
-      (step === 1 && !choice) ||
-      (step === 2 && !rating)
-    ) {
+  const heading = useRef<HTMLHeadingElement>(null);
+  const move = (next: number) => {
+    setError("");
+    setStep(next);
+    window.requestAnimationFrame(() =>
+      heading.current?.focus({ preventScroll: true }),
+    );
+  };
+  const advance = () => {
+    const missing = [!name.trim(), !choice, !rating][step];
+    if (missing) {
       setError(
         step === 0
-          ? "A first name is all we need."
-          : "Choose an answer to keep going.",
+          ? "Enter your first name to continue."
+          : "Choose an answer to continue.",
       );
       return;
     }
-    setError("");
-    if (step === 2) setComplete(true);
-    else setStep(step + 1);
-  };
-  const reset = () => {
-    setStep(0);
-    setName("");
-    setChoice("");
-    setRating(0);
-    setError("");
-    setComplete(false);
+    move(step + 1);
   };
   return (
-    <div className={`of-conversation of-conversation-${themes[step]}`}>
-      <div className="of-conversation-header">
-        <Logo compact />
-        <span>A little hello</span>
-        <span>INTERACTIVE DEMO</span>
+    <form
+      className="quick-form"
+      onSubmit={(event) => {
+        event.preventDefault();
+        advance();
+      }}
+      aria-label="Live Openform example"
+    >
+      <div className="quick-top">
+        <span>
+          <Logo compact /> A quick hello
+        </span>
+        <span className="quick-live">
+          <i /> Live demo
+        </span>
       </div>
-      <div className="of-conversation-progress">
-        <span style={{ transform: `scaleX(${complete ? 1 : step / 3})` }} />
+      <div className="quick-progress" aria-hidden="true">
+        {[0, 1, 2].map((i) => (
+          <i className={i <= step ? "filled" : ""} key={i} />
+        ))}
       </div>
-      <div className="of-conversation-body" key={complete ? "done" : step}>
-        {complete ? (
-          <>
-            <span className="of-demo-flower">✳</span>
-            <h2>
-              Nice to meet you,
-              <br />
-              <em>{name.trim()}.</em>
-            </h2>
-            <p>
-              That’s what a better form feels like.
-              <br />
-              Now imagine what you could ask.
-            </p>
-            <button className="of-demo-next" onClick={reset}>
-              Once more? <RotateCcw size={15} />
-            </button>
-          </>
-        ) : (
-          <>
-            <span className="of-demo-question-index">
-              0{step + 1} <ArrowRight size={14} />
-            </span>
-            <h2>
-              {step === 0 ? (
-                <>
-                  First things first,
-                  <br />
-                  what’s your name?
-                </>
-              ) : step === 1 ? (
-                <>
-                  Hi {name.trim()}.<br />
-                  What brings you here?
-                </>
-              ) : (
-                <>
-                  One last thing.
-                  <br />
-                  How did that feel?
-                </>
-              )}
-            </h2>
-            {step === 0 ? (
-              <input
-                className="of-demo-input"
-                aria-label="Your first name"
-                placeholder="Your first name goes here..."
-                value={name}
-                maxLength={40}
-                onChange={(e) => {
-                  setName(e.target.value);
+      <div className="quick-body" key={step}>
+        <div className="quick-index">
+          {step < 3 ? `0${step + 1} / 03` : <Check size={18} />}
+        </div>
+        <h2 ref={heading} tabIndex={-1}>
+          {
+            [
+              "What should we call you?",
+              `What are you making, ${name.trim()}?`,
+              "How did that feel?",
+              `Thanks, ${name.trim()}.`,
+            ][step]
+          }
+        </h2>
+        {step === 0 && (
+          <input
+            aria-label="Your first name"
+            autoComplete="given-name"
+            placeholder="Your first name"
+            value={name}
+            maxLength={32}
+            onChange={(event) => {
+              setName(event.target.value);
+              setError("");
+            }}
+          />
+        )}
+        {step === 1 && (
+          <div
+            className="quick-options"
+            role="group"
+            aria-label="What are you making?"
+          >
+            {["A survey", "A signup form", "Something else"].map((item, i) => (
+              <button
+                type="button"
+                key={item}
+                aria-pressed={choice === item}
+                onClick={() => {
+                  setChoice(item);
                   setError("");
                 }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") next();
-                }}
-              />
-            ) : step === 1 ? (
-              <div className="of-demo-options">
-                {["A curious mind", "A big idea", "A better way to ask"].map(
-                  (o, i) => (
-                    <button
-                      key={o}
-                      className={choice === o ? "chosen" : ""}
-                      onClick={() => {
-                        setChoice(o);
-                        setError("");
-                      }}
-                      aria-pressed={choice === o}
-                    >
-                      <span>{String.fromCharCode(65 + i)}</span>
-                      {o}
-                      {choice === o && <Check size={15} />}
-                    </button>
-                  ),
-                )}
-              </div>
-            ) : (
-              <div className="of-demo-ratings" aria-label="Rate this form">
-                {[1, 2, 3, 4, 5].map((n) => (
-                  <button
-                    key={n}
-                    onClick={() => {
-                      setRating(n);
-                      setError("");
-                    }}
-                    aria-label={`${n} out of 5`}
-                    aria-pressed={rating === n}
-                    className={rating >= n ? "chosen" : ""}
-                  >
-                    <Star
-                      size={28}
-                      fill={rating >= n ? "currentColor" : "none"}
-                    />
-                    <span>{n}</span>
-                  </button>
-                ))}
-              </div>
-            )}
-            {error && (
-              <p role="alert" className="of-demo-error">
-                {error}
-              </p>
-            )}
-            <div className="of-demo-action">
-              <button className="of-demo-next" onClick={next}>
-                {step === 2 ? "All done" : "OK"} <Check size={15} />
+              >
+                <span>{"ABC"[i]}</span>
+                {item}
+                {choice === item && <Check size={14} />}
               </button>
-              {step === 0 && (
-                <span>
-                  press <strong>Enter ↵</strong>
-                </span>
-              )}
-              {step > 0 && (
+            ))}
+          </div>
+        )}
+        {step === 2 && (
+          <div className="quick-stars" role="group" aria-label="Rate the demo">
+            {[1, 2, 3, 4, 5].map((item) => (
+              <button
+                type="button"
+                key={item}
+                aria-label={`${item} out of 5`}
+                aria-pressed={rating === item}
+                onClick={() => {
+                  setRating(item);
+                  setError("");
+                }}
+              >
+                <Star
+                  size={24}
+                  fill={rating >= item ? "currentColor" : "none"}
+                />
+              </button>
+            ))}
+          </div>
+        )}
+        {step === 3 && (
+          <p>
+            You just answered an Openform. This preview keeps your answers on
+            this page.
+          </p>
+        )}
+        {error && (
+          <p className="quick-error" role="alert">
+            {error}
+          </p>
+        )}
+        <div className="quick-actions">
+          {step < 3 ? (
+            <>
+              <button className="quick-next" type="submit">
+                {step === 2 ? "Finish" : "Continue"} <ArrowRight size={16} />
+              </button>
+              {step === 0 ? (
+                <Kbd>↵ Enter</Kbd>
+              ) : (
                 <button
-                  className="of-demo-back"
-                  onClick={() => {
-                    setStep(step - 1);
-                    setError("");
-                  }}
-                  aria-label="Previous preview question"
+                  type="button"
+                  className="quick-back"
+                  onClick={() => move(step - 1)}
+                  aria-label="Previous question"
                 >
-                  <ChevronLeft size={17} />
+                  <ArrowLeft size={17} />
                 </button>
               )}
-            </div>
-          </>
-        )}
-      </div>
-      <div className="of-conversation-footer">
-        <span>
-          Made with <strong>openform</strong>
-        </span>
-        <span>
-          {complete ? "Thanks for being curious." : `${step + 1} of 3`}
-        </span>
-      </div>
-    </div>
-  );
-}
-
-function MiniEditor() {
-  const [active, setActive] = useState(1);
-  const [theme, setTheme] = useState("sage");
-  const questions = [
-    "First things first, your name?",
-    "How was your experience?",
-    "What could we do better?",
-  ];
-  return (
-    <div className="of-mini-editor">
-      <aside>
-        <span>YOUR QUESTIONS</span>
-        {questions.map((q, i) => (
-          <button
-            className={active === i ? "active" : ""}
-            key={q}
-            onClick={() => setActive(i)}
-          >
-            <span>{i + 1}</span>
-            {q}
-          </button>
-        ))}
-        <span className="of-mini-theme-label">A LITTLE PERSONALITY</span>
-        <div className="of-mini-themes">
-          {["sage", "peach", "lilac"].map((t) => (
+            </>
+          ) : (
             <button
-              key={t}
-              className={`of-swatch-${t} ${theme === t ? "active" : ""}`}
-              onClick={() => setTheme(t)}
-              aria-label={`Preview ${t} theme`}
-              aria-pressed={theme === t}
+              type="button"
+              className="quick-next"
+              onClick={() => {
+                setName("");
+                setChoice("");
+                setRating(0);
+                move(0);
+              }}
             >
-              {theme === t && <Check size={12} />}
+              Start over <RotateCcw size={15} />
             </button>
-          ))}
+          )}
         </div>
-      </aside>
-      <div className={`of-mini-preview of-mini-preview-${theme}`}>
-        <span className="of-mini-preview-step">{active + 1} →</span>
-        <h4>{questions[active]}</h4>
-        {active === 1 ? (
-          <div className="of-mini-stars">
-            {[1, 2, 3, 4, 5].map((n) => (
-              <Star key={n} size={23} />
-            ))}
-          </div>
-        ) : (
-          <span className="of-mini-answer">
-            {active === 0
-              ? "Type your name here…"
-              : "Every little thought helps…"}
-          </span>
-        )}
-        <span className="of-mini-ok">
-          OK <Check size={10} />
+      </div>
+      <div className="quick-footer">
+        <span>
+          Made with <b>openform</b>
         </span>
+        <ArrowDown size={13} />
       </div>
-    </div>
-  );
-}
-function UseCases({ onOpenWorkspace }: { onOpenWorkspace: () => void }) {
-  const [selected, setSelected] = useState(0);
-  const cases = [
-    {
-      name: "Feedback",
-      title: "Your next great idea<br/>might be their answer.",
-      question: "What could we do better?",
-      text: "Give your customers a thoughtful place to share what’s working, what isn’t, and what comes next.",
-      theme: "sage",
-    },
-    {
-      name: "Sign-ups",
-      title: "Bring the right<br/>people together.",
-      question: "What’s your idea of a great event?",
-      text: "From a community meetup to your next workshop. Make a first impression that feels like a warm welcome.",
-      theme: "peach",
-    },
-    {
-      name: "Research",
-      title: "Better questions.<br/>Fresh perspectives.",
-      question: "Tell us about the last time…",
-      text: "Look beyond the obvious. Collect honest perspectives, understand a real problem, and find your next direction.",
-      theme: "lilac",
-    },
-    {
-      name: "Applications",
-      title: "Meet the person.<br/>Not just the résumé.",
-      question: "What are you most proud of?",
-      text: "Open the door to interesting people. Turn a job application into the start of a real conversation.",
-      theme: "sand",
-    },
-  ];
-  const chosen = cases[selected];
-  return (
-    <section className="of-use-cases" id="of-use-cases">
-      <div className="of-use-case-top">
-        <span className="of-eyebrow">FOR ALL YOUR GOOD QUESTIONS</span>
-        <div
-          className="of-use-case-tabs"
-          role="tablist"
-          aria-label="Form use cases"
-        >
-          {cases.map((c, i) => (
-            <button
-              key={c.name}
-              role="tab"
-              aria-selected={selected === i}
-              aria-controls="of-use-case-panel"
-              id={`of-use-case-tab-${i}`}
-              onClick={() => setSelected(i)}
-            >
-              {c.name}
-            </button>
-          ))}
-        </div>
-      </div>
-      <div
-        className="of-use-case-panel"
-        id="of-use-case-panel"
-        role="tabpanel"
-        aria-labelledby={`of-use-case-tab-${selected}`}
-      >
-        <div key={chosen.name}>
-          <h2>
-            {chosen.title.split("<br/>").map((line, i) => (
-              <span key={line}>
-                {i > 0 && <br />}
-                {line}
-              </span>
-            ))}
-          </h2>
-          <p>{chosen.text}</p>
-          <button className="of-text-link" onClick={onOpenWorkspace}>
-            Make it happen <ArrowRight size={16} />
-          </button>
-        </div>
-        <div
-          className={`of-use-case-art of-use-case-${chosen.theme}`}
-          aria-hidden="true"
-        >
-          <span className="of-use-case-flower">✳</span>
-          <div className="of-use-case-paper">
-            <span>ONE GOOD QUESTION</span>
-            <h3>{chosen.question}</h3>
-            <span className="of-paper-answer">Your perspective goes here…</span>
-            <span className="of-paper-button">
-              Let’s talk <ArrowUpRight size={13} />
-            </span>
-          </div>
-          <span className="of-art-note">
-            Start something
-            <br />
-            <em>worth asking.</em>
-          </span>
-        </div>
-      </div>
-    </section>
+      <PixelField className="quick-texture" />
+    </form>
   );
 }

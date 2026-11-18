@@ -418,7 +418,7 @@ export default function Builder({
             {tab === "design" ? (
               <div className="design-intro">
                 <Palette size={25} />
-                <h3>A little personality.</h3>
+                <h3>Form theme</h3>
                 <p>
                   A thoughtful color can set the tone for the whole
                   conversation.
@@ -496,10 +496,7 @@ export default function Builder({
                     {question.title || "Your question goes here"}
                     {question.required && <sup>*</sup>}
                   </h2>
-                  <p>
-                    {question.description ||
-                      "A good question opens up a world of possibilities."}
-                  </p>
+                  {question.description && <p>{question.description}</p>}
                   <QuestionInput
                     question={question}
                     value=""
@@ -632,7 +629,7 @@ export default function Builder({
                   rows={3}
                   value={question.description}
                   maxLength={5000}
-                  placeholder="Add a little context..."
+                  placeholder="Optional question description"
                   onChange={(e) =>
                     updateQuestion({ description: e.target.value })
                   }
@@ -787,7 +784,7 @@ export default function Builder({
         </Modal>
       )}
       {dialog === "preview" && (
-        <Modal title="A little sneak peek" onClose={() => setDialog(null)} wide>
+        <Modal title="Preview form" onClose={() => setDialog(null)} wide>
           <div className="preview-notice">
             <Eye size={14} /> Preview mode — answers won’t be saved.
           </div>
